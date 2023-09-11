@@ -58,5 +58,26 @@ function validate_cashu_token() {
     }
 }
 
+
+// AJAX handler for token validation
+function validate_cashu_token() {
+    $token = sanitize_text_field($_POST['token']);
+
+    // Call the Node.js server to validate the token
+    $response = wp_remote_post('http://localhost:3000/checkSpendable', [
+        'body' => json_encode(['token' => $token]),
+        'headers' => ['Content-Type' => 'application/json']
+    ]);
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if ($data['isValid']) {
+        wp_send_json_success();
+    } else {
+        wp_send_json_error(array('message' => 'Invalid token.'));
+    }
+}
+
 add_action('wp_ajax_validate_cashu_token', 'validate_cashu_token');
 add_action('wp_ajax_nopriv_validate_cashu_token', 'validate_cashu_token');

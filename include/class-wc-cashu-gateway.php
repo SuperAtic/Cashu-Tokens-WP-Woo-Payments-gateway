@@ -95,3 +95,34 @@ public function process_payment($order_id) {
         return;
     }
 }
+
+public function process_payment($order_id) {
+    global $woocommerce;
+    $order = new WC_Order($order_id);
+
+    $token = $_POST['cashu_token'];
+
+    // Call the Node.js server to get the amount of satoshis from the token
+    $response = wp_remote_post('http://localhost:3000/sumProofs', [
+        'body' => json_encode(['token' => $token]),
+        'headers' => ['Content-Type' => 'application/json']
+    ]);
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    $satoshis = $data['satoshis'];
+
+    if ($satoshis == $order->get_total()) {
+        $order->payment_complete();
+        $order->reduce_order_stock();
+        $woocommerce->cart->empty_cart();
+        return array(
+            'result' => 'success',
+            'redirect' => $this->get_return_url($order)
+        );
+    } else {
+        wc_add_notice(__('Payment error: Invalid token or incorrect amount.', 'woocommerce'), 'error');
+        return;
+    }
+}
