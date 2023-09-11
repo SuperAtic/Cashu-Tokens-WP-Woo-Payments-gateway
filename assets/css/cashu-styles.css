@@ -1,0 +1,27 @@
+/* Add your custom CSS styles here */
+#cashu-payment-form {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+#cashu-payment-form h3 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#cashu-payment-form p {
+    color: #666;
+    font-size: 16px;
+}
+
+#cashu-card-number {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Add more custom styles as needed */
